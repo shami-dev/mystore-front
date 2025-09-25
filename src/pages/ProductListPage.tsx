@@ -61,7 +61,7 @@ const products = [
 export function ProductListPage() {
   return (
     <div
-      className="grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center
+      className="grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center max-w-7xl mx-auto px-4
 "
     >
       {products.map((product) => (
