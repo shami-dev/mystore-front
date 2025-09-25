@@ -12,7 +12,7 @@ export function NavBar({ totalItems }: NavBarProps) {
           <div
             tabIndex={0}
             role="button"
-            className="btn btn-ghost lg:hidden pl-0 pr-4"
+            className="btn btn-ghost lg:hidden pl-0 pr-4 mr-2"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
