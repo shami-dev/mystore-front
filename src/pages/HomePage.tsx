@@ -1,3 +1,7 @@
 export function HomePage() {
-  return <h1>Welcome to the Homepage!</h1>;
+  return (
+    <div className="h-screen">
+      <h1>Welcome to the Homepage!</h1>
+    </div>
+  );
 }

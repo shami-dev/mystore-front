@@ -1,3 +1,7 @@
 export function ProductListAdminPage() {
-  return <h1>Welcome to the ProductListAdmin page!</h1>;
+  return (
+    <div className="h-screen">
+      <h1>Welcome to the ProductListAdminPage page!</h1>
+    </div>
+  );
 }

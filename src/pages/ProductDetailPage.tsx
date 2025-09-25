@@ -1,3 +1,7 @@
 export function ProductDetailPage() {
-  return <h1>Welcome to the ProductPage page!</h1>;
+  return (
+    <div className="h-screen">
+      <h1>Welcome to the ProductPage page!</h1>
+    </div>
+  );
 }
