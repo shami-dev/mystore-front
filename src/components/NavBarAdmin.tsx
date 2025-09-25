@@ -6,7 +6,7 @@ export function NavBarAdmin() {
       <div className="navbar-start flex-2">
         <Link
           to="/internal-management/add-product"
-          className="font-bold text-xl lg:text-2xl"
+          className="font-bold text-xl lg:text-2xl text-white"
         >
           myStore <span className="font-normal italic">Admin Panel</span>
         </Link>
@@ -16,7 +16,7 @@ export function NavBarAdmin() {
           to="products-admin"
           tabIndex={0}
           role="button"
-          className="link link-hover m-1 text-base lg:text-lg"
+          className="link link-hover m-1 text-base lg:text-lg text-white"
         >
           All Products
         </Link>
