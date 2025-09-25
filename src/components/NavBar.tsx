@@ -6,7 +6,7 @@ type NavBarProps = {
 
 export function NavBar({ totalItems }: NavBarProps) {
   return (
-    <div className="navbar p-0">
+    <div className="navbar p-0 lg:my-5">
       <div className="navbar-start">
         <div className="dropdown">
           <div

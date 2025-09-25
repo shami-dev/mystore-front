@@ -9,8 +9,8 @@ export function MainLayout() {
     <>
       <div className="max-w-7xl mx-auto px-4">
         <NavBar totalItems={totalItems} />
+        <Outlet />
       </div>
-      <Outlet />
       <div className="bg-gray-300">
         <Footer />
       </div>

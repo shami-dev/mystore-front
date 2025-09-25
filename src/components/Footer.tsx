@@ -1,6 +1,6 @@
 export function Footer() {
   return (
-    <footer className="footer footer-center p-4">
+    <footer className="footer footer-center p-4 mt-5">
       <aside>
         <p className="text-xs lg:text-sm">
           Copyright © {new Date().getFullYear()} - All right reserved by myStore
