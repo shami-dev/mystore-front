@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-type NavBarProps = {
+export type NavBarProps = {
   totalItems: number;
 };
 

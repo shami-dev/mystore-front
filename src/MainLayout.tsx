@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
 import { Footer } from "./components/Footer";
 
-const totalItems: number = 9;
+export const totalItems: number = 9;
 
 export function MainLayout() {
   return (

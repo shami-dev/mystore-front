@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Modal } from "../components/Modal";
+import { totalItems } from "../MainLayout";
 
 const product1 = {
   id: 111,
@@ -97,13 +99,13 @@ export function ProductDetailPage() {
             </div>
           </div>
         ) : null}
-
-        <button
-          disabled={allOutOfStock}
-          className="btn btn-lg btn-neutral w-full rounded-full disabled:btn-disabled font-normal"
-        >
-          {allOutOfStock ? "Out of Stock" : "Add to Cart"}
-        </button>
+        <Modal
+          allOutOfStock={allOutOfStock}
+          productName={product1.name}
+          productSize={selectedSize}
+          productPrice={product1.priceCents}
+          productCount={totalItems}
+        />
       </div>
     </div>
   );
