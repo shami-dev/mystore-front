@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export function HomePage() {
   return (
-    <div className="hero min-h-screen bg-[image-set(url('https://res.cloudinary.com/djqdtvv7u/image/upload/v1758814784/woman-in-top-and-shorts_si05mb.avif')_type('image/avif'),url('https://res.cloudinary.com/djqdtvv7u/image/upload/v1758814784/woman-in-top-and-shorts_si05mb.webp')_type('image/webp'),url('https://res.cloudinary.com/djqdtvv7u/image/upload/v1758814784/woman-in-top-and-shorts_si05mb.png')_type('image/png'))] bg-cover bg-center">
+    <div className="hero min-h-screen bg-[image-set(url('https://res.cloudinary.com/djqdtvv7u/image/upload/v1758814784/woman-in-top-and-shorts_si05mb.avif')_type('image/avif'),url('https://res.cloudinary.com/djqdtvv7u/image/upload/v1758814784/woman-in-top-and-shorts_si05mb.webp')_type('image/webp'),url('https://res.cloudinary.com/djqdtvv7u/image/upload/v1758814784/woman-in-top-and-shorts_si05mb.png')_type('image/png'))] bg-cover bg-top">
       <div className="hero-overlay"></div>
       <div className="hero-content text-neutral-content text-center">
         <div className="max-w-md">
