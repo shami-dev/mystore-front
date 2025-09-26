@@ -29,8 +29,9 @@ export function Modal({
 
   return (
     <div>
+      <div className="divider md:hidden py-0"></div>
       <button
-        className="btn btn-lg btn-neutral w-full rounded-full disabled:btn-disabled font-normal hover:opacity-60"
+        className="btn btn-lg btn-neutral w-full rounded-full disabled:btn-disabled font-normal hover:opacity-60 my-6"
         onClick={() => setIsOpen(true)}
         disabled={allOutOfStock}
       >
