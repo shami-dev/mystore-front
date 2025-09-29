@@ -10,8 +10,10 @@ export function AdminLayout() {
           <NavBarAdmin />
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-4">
-        <Outlet />
+      <div className="bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <Outlet />
+        </div>
       </div>
       <div className="bg-gray-300">
         <Footer />
