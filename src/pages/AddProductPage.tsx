@@ -1,33 +1,33 @@
 import { useState } from "react";
 
-interface ProductVariant {
+type ProductVariant = {
   id: number;
   size: string;
   sku: string;
   price: string;
   sortOrder: number;
   stockQuantity: number;
-}
+};
 
-interface FormData {
+type FormData = {
   categoryName: string;
-  name: string;
+  productName: string;
   description: string;
   imageAlt: string;
   variants: ProductVariant[];
-}
+};
 
-interface UploadedImage {
+type UploadedImage = {
   id: number;
   file: File;
   preview: string;
   name: string;
-}
+};
 
 export function AddProductPage() {
   const [formData, setFormData] = useState<FormData>({
     categoryName: "",
-    name: "",
+    productName: "",
     description: "",
     imageAlt: "",
     variants: [
@@ -148,16 +148,20 @@ export function AddProductPage() {
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Category Information */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:p-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            <legend className="text-xl font-semibold text-gray-900 mb-6">
               Category Information
-            </h2>
+            </legend>
 
             <fieldset className="fieldset">
-              <legend className="fieldset-legend text-base text-gray-500">
+              <label
+                htmlFor="category"
+                className="fieldset-legend text-base text-gray-500"
+              >
                 Category Name
-              </legend>
+              </label>
               <select
                 id="category"
+                name="category"
                 value={formData.categoryName}
                 className="select mb-1"
                 required
@@ -179,19 +183,26 @@ export function AddProductPage() {
 
           {/* Product Information */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:p-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            <legend className="text-xl font-semibold text-gray-900 mb-6">
               Product Information
-            </h2>
+            </legend>
 
             <fieldset className="fieldset space-y-4">
-              <legend className="fieldset-legend text-base text-gray-500">
+              <label
+                htmlFor="productName"
+                className="fieldset-legend text-base text-gray-500"
+              >
                 Product Name
-              </legend>
+              </label>
               <input
+                id="productName"
+                name="productName"
                 type="text"
                 className="input mb-1"
                 placeholder="Enter product name"
-                onChange={(e) => handleInputChange("name", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("productName", e.target.value)
+                }
                 required
                 minLength={2}
                 maxLength={100}
@@ -200,10 +211,39 @@ export function AddProductPage() {
                 {/* Please enter a product name. */}
               </p>
 
-              <legend className="fieldset-legend text-base text-gray-500">
+              <label
+                htmlFor="description"
+                className="fieldset-legend text-base text-gray-500"
+              >
+                Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                className="textarea h-24 mb-0"
+                placeholder="Describe the product..."
+                onChange={(e) =>
+                  handleInputChange("description", e.target.value)
+                }
+                required
+                maxLength={500}
+              ></textarea>
+              <p className="label mb-1">
+                <span>{formData.description.length}/500 characters</span>
+              </p>
+              <p className="label text-sm text-error">
+                {/* Please enter a description. */}
+              </p>
+
+              <label
+                htmlFor="imageAlt"
+                className="fieldset-legend text-base text-gray-500"
+              >
                 Image Alt Text
-              </legend>
+              </label>
               <input
+                id="imageAlt"
+                name="imageAlt"
                 type="text"
                 className="input mb-1"
                 placeholder="Describe the product image"
@@ -214,50 +254,37 @@ export function AddProductPage() {
               <p className="label text-sm text-error">
                 {/* Please enter an image alt text. */}
               </p>
-
-              <legend className="fieldset-legend text-base text-gray-500">
-                Description
-              </legend>
-              <textarea
-                className="textarea h-24 mb-0"
-                placeholder="Describe the product..."
-                onChange={(e) =>
-                  handleInputChange("description", e.target.value)
-                }
-                required
-                maxLength={500}
-              ></textarea>
-              <label className="label mb-1">
-                <span>{formData.description.length}/500 characters</span>
-              </label>
-              <p className="label text-sm text-error">
-                {/* Please enter a description. */}
-              </p>
             </fieldset>
           </div>
 
           {/* Media */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:p-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Media</h2>
+            <legend className="text-xl font-semibold text-gray-900 mb-6">
+              Media
+            </legend>
 
             <div className="space-y-6">
               <div className="form-control w-full mb-1">
-                <legend className="fieldset-legend text-base text-gray-500 mb-1">
+                <label
+                  htmlFor="imageUpload"
+                  className="fieldset-legend text-base text-gray-500 mb-1"
+                >
                   Product Images (Maximum 2)
-                </legend>
+                </label>
 
                 {uploadedImages.length < 2 && (
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 lg:p-8 text-center hover:border-gray-400 transition-colors">
                     <input
+                      id="imageUpload"
+                      name="imageUpload"
                       type="file"
                       multiple
                       accept="image/*"
                       onChange={handleImageUpload}
                       className="hidden"
-                      id="image-upload"
                       required
                     />
-                    <label htmlFor="image-upload" className="cursor-pointer">
+                    <label htmlFor="imageUpload" className="cursor-pointer">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -331,9 +358,9 @@ export function AddProductPage() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:p-8">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <legend className="text-xl font-semibold text-gray-900">
                   Product Variants
-                </h2>
+                </legend>
                 <p className="text-sm text-gray-600 mt-1">
                   Enter all sizes, even if out of stock
                 </p>
@@ -366,9 +393,9 @@ export function AddProductPage() {
                   className="border border-gray-200 rounded-lg p-4 lg:p-6"
                 >
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-bold text-gray-900">
+                    <legend className="font-bold text-gray-900">
                       Size Variant {index + 1}
-                    </h3>
+                    </legend>
                     {formData.variants.length > 1 && (
                       <button
                         type="button"
@@ -391,12 +418,17 @@ export function AddProductPage() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
                     <div className="flex flex-col">
-                      <legend className="fieldset-legend text-base text-gray-500">
+                      <label
+                        htmlFor="size"
+                        className="fieldset-legend text-base text-gray-500"
+                      >
                         Size
-                      </legend>
+                      </label>
                       <input
+                        id="size"
+                        name="size"
                         type="text"
                         className="input mb-1"
                         placeholder="S, M, L..."
@@ -415,10 +447,15 @@ export function AddProductPage() {
                       </p>
                     </div>
                     <div className="flex flex-col">
-                      <legend className="fieldset-legend text-base text-gray-500">
+                      <label
+                        htmlFor="sku"
+                        className="fieldset-legend text-base text-gray-500"
+                      >
                         SKU
-                      </legend>
+                      </label>
                       <input
+                        id="sku"
+                        name="sku"
                         type="text"
                         className="input mb-1"
                         placeholder="PROD-S-001"
@@ -434,10 +471,15 @@ export function AddProductPage() {
                     </div>
 
                     <div className="flex flex-col">
-                      <legend className="fieldset-legend text-base text-gray-500">
+                      <label
+                        htmlFor="price"
+                        className="fieldset-legend text-base text-gray-500"
+                      >
                         Price (€ cents)
-                      </legend>
+                      </label>
                       <input
+                        id="price"
+                        name="price"
                         type="number"
                         className="input mb-1"
                         placeholder="2500"
@@ -459,10 +501,15 @@ export function AddProductPage() {
                     </div>
 
                     <div className="flex flex-col">
-                      <legend className="fieldset-legend text-base text-gray-500">
+                      <label
+                        htmlFor="sortOrder"
+                        className="fieldset-legend text-base text-gray-500"
+                      >
                         Sort Order
-                      </legend>
+                      </label>
                       <input
+                        id="sortOrder"
+                        name="sortOrder"
                         type="number"
                         className="input mb-1"
                         placeholder="1"
@@ -483,10 +530,15 @@ export function AddProductPage() {
                     </div>
 
                     <div className="flex flex-col">
-                      <legend className="fieldset-legend text-base text-gray-500">
+                      <label
+                        htmlFor="stockQuantity"
+                        className="fieldset-legend text-base text-gray-500"
+                      >
                         Stock Quantity
-                      </legend>
+                      </label>
                       <input
+                        id="stockQuantity"
+                        name="stockQuantity"
                         type="number"
                         className="input mb-1"
                         placeholder="0"
