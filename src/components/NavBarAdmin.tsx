@@ -13,7 +13,7 @@ export function NavBarAdmin() {
       </div>
       <div className="navbar-end flex-1">
         <Link
-          to="products-admin"
+          to="/products"
           tabIndex={0}
           role="button"
           className="link link-hover m-1 text-base lg:text-lg text-white"

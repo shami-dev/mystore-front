@@ -8,7 +8,6 @@ import { ProductListPage } from "./pages/ProductListPage.tsx";
 import { ProductDetailPage } from "./pages/ProductDetailPage.tsx";
 import { NotFoundPage } from "./pages/NotFoundPage.tsx";
 import { HomePage } from "./pages/HomePage.tsx";
-import { ProductListAdminPage } from "./pages/ProductListAdminPage.tsx";
 import { AdminLayout } from "./AdminLayout.tsx";
 
 const router = createBrowserRouter([
@@ -39,12 +38,8 @@ const router = createBrowserRouter([
     element: <AdminLayout />,
     children: [
       {
-        path: "add-product", // becomes /internal-management/add-product
+        path: "add-product",
         element: <AddProductPage />,
-      },
-      {
-        path: "products-admin", // becomes /internal-management/products-admin
-        element: <ProductListAdminPage />,
       },
     ],
   },
