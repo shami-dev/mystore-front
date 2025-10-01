@@ -1,31 +1,14 @@
 import { useState } from "react";
-
-type ProductVariant = {
-  id: number;
-  size: string;
-  sku: string;
-  price: string;
-  sortOrder: number;
-  stockQuantity: number;
-};
-
-type FormData = {
-  categoryName: string;
-  productName: string;
-  description: string;
-  imageAlt: string;
-  variants: ProductVariant[];
-};
-
-type UploadedImage = {
-  id: number;
-  file: File;
-  preview: string;
-  name: string;
-};
+import { productSchema } from "../validation/product";
+import { addProduct } from "../api/products";
+import { ZodError } from "zod";
+import { type ProductInput } from "../validation/product";
+import type { ProductType, ProductVariant, UploadedImage } from "../types";
 
 export function AddProductPage() {
-  const [formData, setFormData] = useState<FormData>({
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const [formData, setFormData] = useState<ProductType>({
     categoryName: "",
     productName: "",
     description: "",
@@ -44,7 +27,7 @@ export function AddProductPage() {
 
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (field: keyof ProductType, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -116,24 +99,62 @@ export function AddProductPage() {
     setUploadedImages((prev) => prev.filter((img) => img.id !== imageId));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Here you would typically send the data to your backend
-    console.log("Form submitted:", formData);
-    console.log("Uploaded images:", uploadedImages);
-    alert("Product would be published! Check console for form data.");
+
+    const productInput: ProductInput = {
+      categoryName:
+        formData.categoryName === "clothing"
+          ? "1"
+          : formData.categoryName === "accessories"
+          ? "2"
+          : "",
+      name: formData.productName,
+      description: formData.description,
+      imageAlt: formData.imageAlt,
+      imageUrl1: uploadedImages[0]?.preview || "",
+      imageUrl2: uploadedImages[1]?.preview,
+      variants: formData.variants.map((v) => ({
+        size: v.size,
+        sku: v.sku,
+        price: Number(v.price),
+        stockQuantity: v.stockQuantity,
+        sortOrder: v.sortOrder,
+      })),
+    };
+
+    try {
+      setErrors({});
+      productSchema.parse(productInput);
+
+      const product = await addProduct(productInput);
+      console.log("Product created:", product);
+      alert("Product successfully created!");
+    } catch (err: unknown) {
+      if (err instanceof ZodError) {
+        const fieldErrors: Record<string, string> = {};
+        err.issues.forEach((issue) => {
+          const path = issue.path.join(".");
+          fieldErrors[path] = issue.message;
+        });
+        setErrors(fieldErrors);
+      } else if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert("An unexpected error occurred");
+      }
+    }
   };
 
   const handleCancel = () => {
     if (confirm("Are you sure you want to discard all changes?")) {
-      // Navigate back to product list
       console.log("Navigating back to product list...");
     }
   };
 
   return (
     <div className="min-h-screen py-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:p-8 mb-8">
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
@@ -154,14 +175,14 @@ export function AddProductPage() {
 
             <fieldset className="fieldset">
               <label
-                htmlFor="category"
+                htmlFor="categoryName"
                 className="fieldset-legend text-base text-gray-500"
               >
                 Category Name
               </label>
               <select
-                id="category"
-                name="category"
+                id="categoryName"
+                name="categoryName"
                 value={formData.categoryName}
                 className="select mb-1"
                 required
@@ -172,12 +193,12 @@ export function AddProductPage() {
                 <option value="" disabled={true}>
                   Select a category
                 </option>
-                <option value="apparel">Apparel</option>
+                <option value="clothing">Clothing</option>
                 <option value="accessories">Accessories</option>
               </select>
-              <span className="label text-sm text-error">
-                {/* Please choose a category. */}
-              </span>
+              <p className="label text-sm text-error">
+                {errors["categoryName"] && errors["categoryName"]}{" "}
+              </p>
             </fieldset>
           </div>
 
@@ -208,7 +229,7 @@ export function AddProductPage() {
                 maxLength={100}
               />
               <p className="label text-error text-sm">
-                {/* Please enter a product name. */}
+                {errors["name"] && errors["name"]}
               </p>
 
               <label
@@ -232,7 +253,7 @@ export function AddProductPage() {
                 <span>{formData.description.length}/500 characters</span>
               </p>
               <p className="label text-sm text-error">
-                {/* Please enter a description. */}
+                {errors["description"] && errors["description"]}{" "}
               </p>
 
               <label
@@ -252,7 +273,7 @@ export function AddProductPage() {
                 maxLength={150}
               />
               <p className="label text-sm text-error">
-                {/* Please enter an image alt text. */}
+                {errors["imageAlt"] && errors["imageAlt"]}{" "}
               </p>
             </fieldset>
           </div>
@@ -282,7 +303,6 @@ export function AddProductPage() {
                       accept="image/*"
                       onChange={handleImageUpload}
                       className="hidden"
-                      required
                     />
                     <label htmlFor="imageUpload" className="cursor-pointer">
                       <svg
@@ -349,7 +369,7 @@ export function AddProductPage() {
                 )}
               </div>
               <p className="label text-sm text-error">
-                {/* Please upload at least one image. */}
+                {errors["imageUrl1"] && errors["imageUrl1"]}
               </p>
             </div>
           </div>
@@ -440,10 +460,12 @@ export function AddProductPage() {
                             e.target.value
                           )
                         }
+                        maxLength={100}
                         required
                       />
                       <p className="label text-sm text-error">
-                        {/* Please enter a size. */}
+                        {errors[`variants.${index}.size`] &&
+                          errors[`variants.${index}.size`]}
                       </p>
                     </div>
                     <div className="flex flex-col">
@@ -466,7 +488,8 @@ export function AddProductPage() {
                         required
                       />
                       <p className="label text-sm text-error">
-                        {/* Please enter SKU (stock keeping unit). */}
+                        {errors[`variants.${index}.sku`] &&
+                          errors[`variants.${index}.sku`]}
                       </p>
                     </div>
 
@@ -496,7 +519,8 @@ export function AddProductPage() {
                         step="1"
                       />
                       <p className="label text-sm text-error">
-                        {/* Please enter a price. */}
+                        {errors[`variants.${index}.price`] &&
+                          errors[`variants.${index}.price`]}
                       </p>
                     </div>
 
@@ -525,7 +549,8 @@ export function AddProductPage() {
                         min="1"
                       />
                       <p className="label text-sm text-error">
-                        {/* Please enter a sort order. */}
+                        {errors[`variants.${index}.sortOrder`] &&
+                          errors[`variants.${index}.sortOrder`]}
                       </p>
                     </div>
 
@@ -554,7 +579,8 @@ export function AddProductPage() {
                         min="0"
                       />
                       <p className="label text-sm text-error">
-                        {/* Please enter a stock quantity. */}
+                        {errors[`variants.${index}.stockQuantity`] &&
+                          errors[`variants.${index}.stockQuantity`]}
                       </p>
                     </div>
                   </div>
