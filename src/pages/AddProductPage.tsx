@@ -445,14 +445,14 @@ export function AddProductPage() {
                   <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
                     <div className="flex flex-col">
                       <label
-                        htmlFor="size"
+                        htmlFor={`size-${index}`}
                         className="fieldset-legend text-base text-gray-500"
                       >
                         Size
                       </label>
                       <input
-                        id="size"
-                        name="size"
+                        id={`size-${index}`}
+                        name={`size-${index}`}
                         type="text"
                         className="input mb-1"
                         placeholder="S, M, L..."
@@ -474,14 +474,14 @@ export function AddProductPage() {
                     </div>
                     <div className="flex flex-col">
                       <label
-                        htmlFor="sku"
+                        htmlFor={`sku-${index}`}
                         className="fieldset-legend text-base text-gray-500"
                       >
                         SKU
                       </label>
                       <input
-                        id="sku"
-                        name="sku"
+                        id={`sku-${index}`}
+                        name={`sku-${index}`}
                         type="text"
                         className="input mb-1"
                         placeholder="PROD-S-001"
@@ -499,14 +499,14 @@ export function AddProductPage() {
 
                     <div className="flex flex-col">
                       <label
-                        htmlFor="price"
+                        htmlFor={`price-${index}`}
                         className="fieldset-legend text-base text-gray-500"
                       >
                         Price (€ cents)
                       </label>
                       <input
-                        id="price"
-                        name="price"
+                        id={`price-${index}`}
+                        name={`price-${index}`}
                         type="number"
                         className="input mb-1"
                         placeholder="2500"
@@ -530,14 +530,14 @@ export function AddProductPage() {
 
                     <div className="flex flex-col">
                       <label
-                        htmlFor="sortOrder"
+                        htmlFor={`sortOrder-${index}`}
                         className="fieldset-legend text-base text-gray-500"
                       >
                         Sort Order
                       </label>
                       <input
-                        id="sortOrder"
-                        name="sortOrder"
+                        id={`sortOrder-${index}`}
+                        name={`sortOrder-${index}`}
                         type="number"
                         className="input mb-1"
                         placeholder="1"
@@ -560,14 +560,14 @@ export function AddProductPage() {
 
                     <div className="flex flex-col">
                       <label
-                        htmlFor="stockQuantity"
+                        htmlFor={`stockQuantity-${index}`}
                         className="fieldset-legend text-base text-gray-500"
                       >
                         Stock Quantity
                       </label>
                       <input
-                        id="stockQuantity"
-                        name="stockQuantity"
+                        id={`stockQuantity-${index}`}
+                        name={`stockQuantity-${index}`}
                         type="number"
                         className="input mb-1"
                         placeholder="0"
