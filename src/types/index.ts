@@ -1,6 +1,6 @@
 export type ProductType = {
-  categoryName: string;
-  productName: string;
+  categoryId: string;
+  name: string;
   description: string;
   imageAlt: string;
   variants: ProductVariant[];
@@ -12,12 +12,13 @@ export type ProductVariant = {
   sku: string;
   price: string;
   sortOrder: number;
-  stockQuantity: number;
+  stockQuantity: string;
 };
 
 export type UploadedImage = {
   id: number;
   file: File;
   preview: string;
+  url?: string;
   name: string;
 };

@@ -9,8 +9,8 @@ export function AddProductPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState<ProductType>({
-    categoryName: "",
-    productName: "",
+    categoryId: "",
+    name: "",
     description: "",
     imageAlt: "",
     variants: [
@@ -20,7 +20,7 @@ export function AddProductPage() {
         sku: "",
         price: "",
         sortOrder: 1,
-        stockQuantity: 0,
+        stockQuantity: "",
       },
     ],
   });
@@ -54,7 +54,7 @@ export function AddProductPage() {
       sku: "",
       price: "",
       sortOrder: formData.variants.length + 1,
-      stockQuantity: 0,
+      stockQuantity: "",
     };
     setFormData((prev) => ({
       ...prev,
@@ -71,28 +71,50 @@ export function AddProductPage() {
     }
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = Array.from(event.target.files || []);
+    if (!files.length) return;
 
-    files.forEach((file) => {
-      if (file.type.startsWith("image/") && uploadedImages.length < 2) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target?.result) {
-            setUploadedImages((prev) => [
-              ...prev,
-              {
-                id: Date.now() + Math.random(),
-                file: file,
-                preview: e.target?.result as string,
-                name: file.name,
-              },
-            ]);
-          }
-        };
-        reader.readAsDataURL(file);
+    for (const file of files) {
+      if (!file.type.startsWith("image/") || uploadedImages.length >= 2) return;
+
+      const previewUrl = URL.createObjectURL(file);
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append(
+        "upload_preset",
+        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+      );
+
+      try {
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${
+            import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+          }/image/upload`,
+          { method: "POST", body: formData }
+        );
+        const data = await res.json();
+
+        if (data.secure_url) {
+          setUploadedImages((prev) => [
+            ...prev,
+            {
+              id: Date.now() + Math.random(),
+              file,
+              preview: previewUrl,
+              url: data.secure_url,
+              name: file.name,
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+        alert("Failed to upload image. Try again.");
       }
-    });
+    }
   };
 
   const removeImage = (imageId: number) => {
@@ -103,22 +125,17 @@ export function AddProductPage() {
     event.preventDefault();
 
     const productInput: ProductInput = {
-      categoryName:
-        formData.categoryName === "clothing"
-          ? "1"
-          : formData.categoryName === "accessories"
-          ? "2"
-          : "",
-      name: formData.productName,
+      categoryId: Number(formData.categoryId),
+      name: formData.name,
       description: formData.description,
       imageAlt: formData.imageAlt,
-      imageUrl1: uploadedImages[0]?.preview || "",
-      imageUrl2: uploadedImages[1]?.preview,
+      imageUrl1: uploadedImages[0]?.url || "",
+      imageUrl2: uploadedImages[1]?.url,
       variants: formData.variants.map((v) => ({
         size: v.size,
         sku: v.sku,
         price: Number(v.price),
-        stockQuantity: v.stockQuantity,
+        stockQuantity: Number(v.stockQuantity),
         sortOrder: v.sortOrder,
       })),
     };
@@ -175,29 +192,29 @@ export function AddProductPage() {
 
             <fieldset className="fieldset">
               <label
-                htmlFor="categoryName"
+                htmlFor="categoryId"
                 className="fieldset-legend text-base text-gray-500"
               >
                 Category Name
               </label>
               <select
-                id="categoryName"
-                name="categoryName"
-                value={formData.categoryName}
+                id="categoryId"
+                name="categoryId"
+                value={formData.categoryId}
                 className="select mb-1"
                 required
                 onChange={(e) =>
-                  handleInputChange("categoryName", e.target.value)
+                  handleInputChange("categoryId", e.target.value)
                 }
               >
                 <option value="" disabled={true}>
                   Select a category
                 </option>
-                <option value="clothing">Clothing</option>
-                <option value="accessories">Accessories</option>
+                <option value="1">Clothing</option>
+                <option value="2">Accessories</option>
               </select>
               <p className="label text-sm text-error">
-                {errors["categoryName"] && errors["categoryName"]}{" "}
+                {errors["categoryId"] && errors["categoryId"]}{" "}
               </p>
             </fieldset>
           </div>
@@ -221,9 +238,7 @@ export function AddProductPage() {
                 type="text"
                 className="input mb-1"
                 placeholder="Enter product name"
-                onChange={(e) =>
-                  handleInputChange("productName", e.target.value)
-                }
+                onChange={(e) => handleInputChange("name", e.target.value)}
                 required
                 minLength={2}
                 maxLength={100}
@@ -324,7 +339,7 @@ export function AddProductPage() {
                         Drag and drop or click to select
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
-                        PNG, JPG up to 10MB each
+                        PNG, JPG, WEBP up to 50KB each
                       </p>
                     </label>
                   </div>
@@ -332,7 +347,7 @@ export function AddProductPage() {
 
                 {/* Image Thumbnails */}
                 {uploadedImages.length > 0 && (
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                     {uploadedImages.map((image) => (
                       <div key={image.id} className="relative group">
                         <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
@@ -347,18 +362,7 @@ export function AddProductPage() {
                           onClick={() => removeImage(image.id)}
                           className="absolute -top-2 -right-2 btn btn-circle btn-sm btn-error"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className="size-4"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+                          ✕
                         </button>
                         <p className="text-xs text-gray-500 mt-1 truncate">
                           {image.name}

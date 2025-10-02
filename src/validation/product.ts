@@ -14,7 +14,7 @@ export const productSchema = z.object({
   }),
   imageUrl1: z.url(),
   imageUrl2: z.union([z.url(), z.literal("")]).optional(),
-  categoryName: z.string().min(1, { message: "Category name is required" }),
+  categoryId: z.number().min(1, { message: "Category name is required" }),
   variants: z.array(
     z.object({
       size: z
