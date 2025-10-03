@@ -4,6 +4,7 @@ import { addProduct } from "../api/products";
 import { ZodError } from "zod";
 import { type ProductInput } from "../validation/product";
 import type { ProductType, ProductVariant, UploadedImage } from "../types";
+import { useNavigate } from "react-router-dom";
 
 export function AddProductPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -26,6 +27,9 @@ export function AddProductPage() {
   });
 
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+
+  const [showToast, setShowToast] = useState(false);
+  const navigate = useNavigate();
 
   const handleInputChange = (field: keyof ProductType, value: string) => {
     setFormData((prev) => ({
@@ -121,16 +125,21 @@ export function AddProductPage() {
     setUploadedImages((prev) => prev.filter((img) => img.id !== imageId));
   };
 
+  type SubmitAction = "publish" | "publishAndAdd";
+
+  const [submitAction, setSubmitAction] = useState<SubmitAction>("publish");
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const action = submitAction;
 
     const productInput: ProductInput = {
       categoryId: Number(formData.categoryId),
       name: formData.name,
       description: formData.description,
       imageAlt: formData.imageAlt,
-      imageUrl1: uploadedImages[0]?.url || "",
-      imageUrl2: uploadedImages[1]?.url,
+      imageUrl1: uploadedImages[0].url || "",
+      imageUrl2: uploadedImages[1]?.url || "",
       variants: formData.variants.map((v) => ({
         size: v.size,
         sku: v.sku,
@@ -144,9 +153,33 @@ export function AddProductPage() {
       setErrors({});
       productSchema.parse(productInput);
 
-      const product = await addProduct(productInput);
-      console.log("Product created:", product);
-      alert("Product successfully created!");
+      await addProduct(productInput);
+      if (action === "publish") {
+        navigate("/products");
+      } else if (action === "publishAndAdd") {
+        setShowToast(true);
+
+        setFormData({
+          categoryId: "",
+          name: "",
+          description: "",
+          imageAlt: "",
+          variants: [
+            {
+              id: Date.now(),
+              size: "",
+              sku: "",
+              price: "",
+              sortOrder: 1,
+              stockQuantity: "",
+            },
+          ],
+        });
+
+        setUploadedImages([]);
+
+        setTimeout(() => setShowToast(false), 5000);
+      }
     } catch (err: unknown) {
       if (err instanceof ZodError) {
         const fieldErrors: Record<string, string> = {};
@@ -165,7 +198,7 @@ export function AddProductPage() {
 
   const handleCancel = () => {
     if (confirm("Are you sure you want to discard all changes?")) {
-      console.log("Navigating back to product list...");
+      navigate("/products");
     }
   };
 
@@ -210,7 +243,7 @@ export function AddProductPage() {
                 <option value="" disabled={true}>
                   Select a category
                 </option>
-                <option value="1">Clothing</option>
+                <option value="1">Apparel</option>
                 <option value="2">Accessories</option>
               </select>
               <p className="label text-sm text-error">
@@ -227,14 +260,15 @@ export function AddProductPage() {
 
             <fieldset className="fieldset space-y-4">
               <label
-                htmlFor="productName"
+                htmlFor="name"
                 className="fieldset-legend text-base text-gray-500"
               >
                 Product Name
               </label>
               <input
-                id="productName"
-                name="productName"
+                id="name"
+                name="name"
+                value={formData.name}
                 type="text"
                 className="input mb-1"
                 placeholder="Enter product name"
@@ -256,6 +290,7 @@ export function AddProductPage() {
               <textarea
                 id="description"
                 name="description"
+                value={formData.description}
                 className="textarea h-24 mb-0"
                 placeholder="Describe the product..."
                 onChange={(e) =>
@@ -280,6 +315,7 @@ export function AddProductPage() {
               <input
                 id="imageAlt"
                 name="imageAlt"
+                value={formData.imageAlt}
                 type="text"
                 className="input mb-1"
                 placeholder="Describe the product image"
@@ -603,14 +639,35 @@ export function AddProductPage() {
               >
                 Cancel
               </button>
+
+              {/* Publish normally */}
               <button
                 type="submit"
                 className="btn btn-neutral lg:btn-wide rounded-full disabled:btn-disabled font-normal hover:opacity-60"
+                onClick={() => setSubmitAction("publish")}
               >
                 Publish Product
               </button>
+
+              {/* Publish & Add Another */}
+              <button
+                type="submit"
+                className="btn lg:btn-wide rounded-full font-normal"
+                onClick={() => setSubmitAction("publishAndAdd")}
+              >
+                Publish & Add Another
+              </button>
             </div>
           </div>
+
+          {/* Toast */}
+          {showToast && (
+            <div className="toast toast-top toast-center">
+              <div className="alert alert-success">
+                <span>Product published successfully!</span>
+              </div>
+            </div>
+          )}
         </form>
       </div>
     </div>
