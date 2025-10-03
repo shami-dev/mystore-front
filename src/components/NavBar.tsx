@@ -38,10 +38,10 @@ export function NavBar({ totalItems }: NavBarProps) {
               <a className="text-base">Categories</a>
               <ul className="p-2">
                 <li>
-                  <a className="text-sm">Apparel</a>
+                  <Link to={"/products?categoryId=1"}>Apparel</Link>
                 </li>
                 <li>
-                  <a className="text-sm">Accessories (coming soon)</a>
+                  <Link to={"/products?categoryId=2"}>Accessories</Link>
                 </li>
               </ul>
             </li>
@@ -65,10 +65,10 @@ export function NavBar({ totalItems }: NavBarProps) {
             className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm text-base"
           >
             <li>
-              <a>Apparel</a>
+              <Link to={"/products?categoryId=1"}>Apparel</Link>
             </li>
             <li>
-              <a>Accessories (coming soon)</a>
+              <Link to={"/products?categoryId=2"}>Accessories</Link>
             </li>
           </ul>
         </div>
