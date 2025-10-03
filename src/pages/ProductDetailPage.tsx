@@ -1,89 +1,65 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getProductById } from "../api/products";
+import type { ProductDetailType } from "../types";
 import { Modal } from "../components/Modal";
-import { totalItems } from "../MainLayout";
-
-const product1 = {
-  id: 111,
-  name: "Women's Dri-FIT Short-Sleeve Top",
-  description: "Lightweight short-sleeve top with sweat-wicking fabric.",
-  priceCents: 3299,
-  imageUrl1:
-    "https://res.cloudinary.com/djqdtvv7u/image/upload/v1758312817/Women_s_Dri-FIT_Short-Sleeve_Top_bbsruu.avif",
-  imageAlt: "Women's Dri-FIT Short-Sleeve Top in White",
-  variants: [
-    {
-      sku: "18101-XXS",
-      size: "XXS",
-      stockQuantity: 0,
-    },
-    {
-      sku: "18101-XS",
-      size: "XS",
-      stockQuantity: 0,
-    },
-    {
-      sku: "18101-S",
-      size: "S",
-      stockQuantity: 0,
-    },
-    {
-      sku: "18101-M",
-      size: "M",
-      stockQuantity: 0,
-    },
-    {
-      sku: "18101-L",
-      size: "L",
-      stockQuantity: 0,
-    },
-    {
-      sku: "18101-XL",
-      size: "XL",
-      stockQuantity: 2,
-    },
-    {
-      sku: "18101-XXL",
-      size: "XXL",
-      stockQuantity: 0,
-    },
-  ],
-};
 
 export function ProductDetailPage() {
+  const { id } = useParams<{ id: string }>();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
-  const allOutOfStock =
-    product1?.variants.every((variant) => variant.stockQuantity === 0) ?? false;
+  const {
+    data: product,
+    isLoading,
+    isError,
+  } = useQuery<ProductDetailType>({
+    queryKey: ["product", id],
+    queryFn: () => getProductById(Number(id)),
+    enabled: !!id,
+  });
+
+  if (isLoading) return <div className="text-center">Loading...</div>;
+  if (isError || !product)
+    return <div className="text-center text-red-500">Product not found.</div>;
+
+  const allOutOfStock = product.variants.every(
+    (variant) => variant.stockQuantity === 0
+  );
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto px-4">
       <div className="flex flex-col md:items-end">
         <img
-          src={product1.imageUrl1}
-          alt={product1.imageAlt}
+          src={product.imageUrl1}
+          alt={product.imageAlt}
           className="rounded-lg md:max-h-[480px] object-contain"
         />
       </div>
 
       <div className="flex flex-col gap-6 md:max-w-96">
         <div>
-          <h1 className="text-xl font-semibold">{product1.name}</h1>
-          <p className="text-gray-600">{product1.description}</p>
-          <p className="text-xl text-gray-800 mt-2">
-            €{(product1.priceCents / 100).toFixed(2)}
-          </p>
+          <h1 className="text-xl font-semibold">{product.name}</h1>
+          <p className="text-gray-600">{product.description}</p>
+
+          {/* Use first variant price for now */}
+          {product.variants.length > 0 && (
+            <p className="text-xl text-gray-800 mt-2">
+              €{(product.variants[0].price / 100).toFixed(2)}
+            </p>
+          )}
         </div>
 
-        {product1?.variants?.length ? (
+        {product?.variants?.length ? (
           <div>
             <p className="mb-2 font-medium">Size</p>
             <div className="grid grid-cols-2 gap-3 max-w-60">
-              {product1.variants.map((variant) => (
+              {product.variants.map((variant) => (
                 <button
                   key={variant.sku}
                   onClick={() => setSelectedSize(variant.size)}
                   disabled={variant.stockQuantity === 0}
-                  className={`px-3 py-1 rounded-md border border-gray-300 hover:border-gray-900 ${
+                  className={`px-3 py-1 rounded-md border hover:border-gray-900 ${
                     selectedSize === variant.size
                       ? "border-gray-900"
                       : "border-gray-300"
@@ -99,12 +75,13 @@ export function ProductDetailPage() {
             </div>
           </div>
         ) : null}
+
         <Modal
           allOutOfStock={allOutOfStock}
-          productName={product1.name}
+          productName={product.name}
           productSize={selectedSize}
-          productPrice={product1.priceCents}
-          productCount={totalItems}
+          productPrice={product.variants[0]?.price ?? 0}
+          productCount={1}
         />
       </div>
     </div>
