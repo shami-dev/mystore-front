@@ -25,16 +25,13 @@ export async function addProduct(params: ProductInput) {
   }
 }
 
-export async function getProducts(): Promise<ProductListType[]> {
-  try {
-    const response = await fetch(`${API_URL}/products`);
-    if (!response.ok) {
-      throw new Error(`Error fetching products: ${response.statusText}`);
-    }
-    const data: ProductListType[] = await response.json();
-    return data;
-  } catch (err) {
-    console.error(err);
-    return [];
+export async function getProducts(
+  categoryId?: number
+): Promise<ProductListType[]> {
+  const query = categoryId ? `?categoryId=${categoryId}` : "";
+  const res = await fetch(`${API_URL}/products${query}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch products");
   }
+  return res.json();
 }

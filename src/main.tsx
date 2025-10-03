@@ -9,6 +9,9 @@ import { ProductDetailPage } from "./pages/ProductDetailPage.tsx";
 import { NotFoundPage } from "./pages/NotFoundPage.tsx";
 import { HomePage } from "./pages/HomePage.tsx";
 import { AdminLayout } from "./AdminLayout.tsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -47,6 +50,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </StrictMode>
 );
