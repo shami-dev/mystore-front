@@ -1,3 +1,15 @@
+export type ProductListType = {
+  id: number;
+  name: string;
+  imageUrl1: string;
+  imageUrl2: string;
+  imageAlt: string;
+  priceRange: {
+    min: number;
+    max: number;
+  };
+};
+
 export type ProductType = {
   categoryId: string;
   name: string;
