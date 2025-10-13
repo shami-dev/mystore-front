@@ -102,11 +102,16 @@ export function AddProductPage() {
       const data = await res.json();
 
       if (data.secure_url) {
+        const transformedUrl = data.secure_url.replace(
+          "/upload/",
+          "/upload/w_480,h_480,c_fill,f_webp/"
+        );
+
         setUploadedImage({
           id: Date.now(),
           file,
           preview: previewUrl,
-          url: data.secure_url,
+          url: transformedUrl,
           name: file.name,
         });
       }
