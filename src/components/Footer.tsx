@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export function Footer() {
   return (
-    <footer className="footer footer-center p-4 mt-5">
+    <footer className="footer footer-center p-4">
       <aside>
         <p className="text-xs lg:text-sm">
           Copyright © {new Date().getFullYear()} - All right reserved by myStore
