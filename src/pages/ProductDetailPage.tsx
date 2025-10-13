@@ -40,6 +40,8 @@ export function ProductDetailPage() {
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto px-4">
       <div className="flex flex-col md:items-end">
         <img
+          width={480}
+          height="auto"
           src={product.imageUrl1}
           alt={product.imageAlt}
           className="rounded-lg md:max-h-[480px] object-contain"
