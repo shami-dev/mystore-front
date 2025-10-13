@@ -26,7 +26,9 @@ export function AddProductPage() {
     ],
   });
 
-  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(
+    null
+  );
 
   const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
@@ -78,52 +80,43 @@ export function AddProductPage() {
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const files = Array.from(event.target.files || []);
-    if (!files.length) return;
+    const file = event.target.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
 
-    for (const file of files) {
-      if (!file.type.startsWith("image/") || uploadedImages.length >= 2) return;
+    const previewUrl = URL.createObjectURL(file);
 
-      const previewUrl = URL.createObjectURL(file);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append(
+      "upload_preset",
+      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+    );
 
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append(
-        "upload_preset",
-        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        }/image/upload`,
+        { method: "POST", body: formData }
       );
+      const data = await res.json();
 
-      try {
-        const res = await fetch(
-          `https://api.cloudinary.com/v1_1/${
-            import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-          }/image/upload`,
-          { method: "POST", body: formData }
-        );
-        const data = await res.json();
-
-        if (data.secure_url) {
-          setUploadedImages((prev) => [
-            ...prev,
-            {
-              id: Date.now() + Math.random(),
-              file,
-              preview: previewUrl,
-              url: data.secure_url,
-              name: file.name,
-            },
-          ]);
-        }
-      } catch (error) {
-        console.error("Upload error:", error);
-        alert("Failed to upload image. Try again.");
+      if (data.secure_url) {
+        setUploadedImage({
+          id: Date.now(),
+          file,
+          preview: previewUrl,
+          url: data.secure_url,
+          name: file.name,
+        });
       }
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Failed to upload image. Try again.");
     }
   };
 
-  const removeImage = (imageId: number) => {
-    setUploadedImages((prev) => prev.filter((img) => img.id !== imageId));
-  };
+  const removeImage = () => setUploadedImage(null);
 
   type SubmitAction = "publish" | "publishAndAdd";
 
@@ -133,13 +126,17 @@ export function AddProductPage() {
     event.preventDefault();
     const action = submitAction;
 
+    if (!uploadedImage) {
+      setErrors({ imageUrl1: "Product image is required." });
+      return;
+    }
+
     const productInput: ProductInput = {
       categoryId: Number(formData.categoryId),
       name: formData.name,
       description: formData.description,
       imageAlt: formData.imageAlt,
-      imageUrl1: uploadedImages[0].url || "",
-      imageUrl2: uploadedImages[1]?.url || "",
+      imageUrl1: uploadedImage.url!,
       variants: formData.variants.map((v) => ({
         size: v.size,
         sku: v.sku,
@@ -154,6 +151,7 @@ export function AddProductPage() {
       productSchema.parse(productInput);
 
       await addProduct(productInput);
+
       if (action === "publish") {
         navigate("/products");
       } else if (action === "publishAndAdd") {
@@ -176,7 +174,7 @@ export function AddProductPage() {
           ],
         });
 
-        setUploadedImages([]);
+        setUploadedImage(null);
 
         setTimeout(() => setShowToast(false), 5000);
       }
@@ -341,70 +339,46 @@ export function AddProductPage() {
                   htmlFor="imageUpload"
                   className="fieldset-legend text-base text-gray-500 mb-1"
                 >
-                  Product Images (Maximum 2)
+                  Product Image
                 </label>
 
-                {uploadedImages.length < 2 && (
+                {/* Image Thumbnails */}
+                {!uploadedImage ? (
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 lg:p-8 text-center hover:border-gray-400 transition-colors">
                     <input
                       id="imageUpload"
                       name="imageUpload"
                       type="file"
-                      multiple
                       accept="image/*"
                       onChange={handleImageUpload}
                       className="hidden"
                     />
                     <label htmlFor="imageUpload" className="cursor-pointer">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="size-12 mx-auto text-gray-400 mb-4"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M11.47 2.47a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06l-3.22-3.22V16.5a.75.75 0 0 1-1.5 0V4.81L8.03 8.03a.75.75 0 0 1-1.06-1.06l4.5-4.5ZM3 15.75a.75.75 0 0 1 .75.75v2.25a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5V16.5a.75.75 0 0 1 1.5 0v2.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V16.5a.75.75 0 0 1 .75-.75Z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
                       <p className="text-lg font-medium text-gray-900">
-                        Upload Images
+                        Upload Image
                       </p>
                       <p className="text-sm text-gray-500 mt-2">
                         Drag and drop or click to select
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
-                        PNG, JPG, WEBP up to 50KB each
+                        PNG/JPG/WEBP — 480x480 px
                       </p>
                     </label>
                   </div>
-                )}
-
-                {/* Image Thumbnails */}
-                {uploadedImages.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-                    {uploadedImages.map((image) => (
-                      <div key={image.id} className="relative group">
-                        <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-                          <img
-                            src={image.preview}
-                            alt={`Preview ${image.name}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeImage(image.id)}
-                          className="absolute -top-2 -right-2 btn btn-circle btn-sm btn-error"
-                        >
-                          ✕
-                        </button>
-                        <p className="text-xs text-gray-500 mt-1 truncate">
-                          {image.name}
-                        </p>
-                      </div>
-                    ))}
+                ) : (
+                  <div className="relative w-48 h-48 mt-4">
+                    <img
+                      src={uploadedImage.preview}
+                      alt={`Preview ${uploadedImage.name}`}
+                      className="w-full h-full object-cover rounded-lg border border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      className="absolute -top-2 -right-2 btn btn-circle btn-sm btn-error"
+                    >
+                      ✕
+                    </button>
                   </div>
                 )}
               </div>
