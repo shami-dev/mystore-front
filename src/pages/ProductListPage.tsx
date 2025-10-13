@@ -21,6 +21,25 @@ export function ProductListPage() {
     queryFn: () => getProducts(categoryId ? parseInt(categoryId) : undefined),
   });
 
+  if (!products || products.length === 0)
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div className="bg-base-200 rounded-md p-10 shadow-inner max-w-md">
+          <div className="text-6xl mb-4">🛒</div>
+          <h2 className="text-2xl font-semibold mb-2">No products yet</h2>
+          <p className="text-gray-500 mb-6">
+            Your shop looks a bit empty. Let’s add your first product and make
+            it shine!
+          </p>
+          <Link
+            to="/internal-management/add-product"
+            className="btn btn-outline btn-wide"
+          >
+            ➕ Create Product
+          </Link>
+        </div>
+      </div>
+    );
   if (isLoading) return <Loader />;
   if (isError) return <ErrorMessage message="Oops! Failed to load products." />;
 
