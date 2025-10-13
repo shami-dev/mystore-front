@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "../components/Card";
 import { getProducts } from "../api/products";
 import type { ProductListType } from "../types";
+import { Loader } from "../components/Loader";
 
 export function ProductListPage() {
   const [searchParams] = useSearchParams();
@@ -17,7 +18,7 @@ export function ProductListPage() {
     queryFn: () => getProducts(categoryId ? parseInt(categoryId) : undefined),
   });
 
-  if (isLoading) return <div className="text-center">Loading...</div>;
+  if (isLoading) return <Loader />;
   if (isError)
     return (
       <div className="text-center text-red-500">Failed to load products.</div>

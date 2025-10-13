@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getProductById } from "../api/products";
 import type { ProductDetailType } from "../types";
 import { Modal } from "../components/Modal";
+import { Loader } from "../components/Loader";
 
 type OutletContextType = {
   totalItems: number;
@@ -26,7 +27,7 @@ export function ProductDetailPage() {
     enabled: !!id,
   });
 
-  if (isLoading) return <div className="text-center">Loading...</div>;
+  if (isLoading) return <Loader />;
   if (isError || !product)
     return <div className="text-center text-red-500">Product not found.</div>;
 
