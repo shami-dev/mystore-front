@@ -8,6 +8,7 @@ import { Modal } from "../components/Modal";
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
 
   const {
     data: product,
@@ -41,8 +42,6 @@ export function ProductDetailPage() {
         <div>
           <h1 className="text-xl font-semibold">{product.name}</h1>
           <p className="text-gray-600">{product.description}</p>
-
-          {/* Use first variant price for now */}
           {product.variants.length > 0 && (
             <p className="text-xl text-gray-800 mt-2">
               €{(product.variants[0].price / 100).toFixed(2)}
@@ -52,8 +51,14 @@ export function ProductDetailPage() {
 
         {product?.variants?.length ? (
           <div>
-            <p className="mb-2 font-medium">Size</p>
-            <div className="grid grid-cols-2 gap-3 max-w-60">
+            <p className={`mb-2 font-medium ${hasError ? "text-red-600" : ""}`}>
+              Select size
+            </p>
+            <div
+              className={`grid grid-cols-2 gap-3 max-w-60 pt-3 ${
+                hasError ? "border border-red-600 rounded-md" : ""
+              }`}
+            >
               {product.variants.map((variant) => (
                 <button
                   key={variant.sku}
@@ -73,6 +78,9 @@ export function ProductDetailPage() {
                 </button>
               ))}
             </div>
+            {hasError && (
+              <p className="mt-2 text-red-600">Please select a size.</p>
+            )}
           </div>
         ) : null}
 
@@ -82,6 +90,7 @@ export function ProductDetailPage() {
           productSize={selectedSize}
           productPrice={product.variants[0]?.price ?? 0}
           productCount={1}
+          onValidationError={setHasError}
         />
       </div>
     </div>
