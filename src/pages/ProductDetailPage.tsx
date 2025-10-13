@@ -1,12 +1,18 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getProductById } from "../api/products";
 import type { ProductDetailType } from "../types";
 import { Modal } from "../components/Modal";
 
+type OutletContextType = {
+  totalItems: number;
+  handleAddToCart: () => void;
+};
+
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const { handleAddToCart, totalItems } = useOutletContext<OutletContextType>();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
 
@@ -89,8 +95,9 @@ export function ProductDetailPage() {
           productName={product.name}
           productSize={selectedSize}
           productPrice={product.variants[0]?.price ?? 0}
-          productCount={1}
+          totalItems={totalItems}
           onValidationError={setHasError}
+          onAddToCart={handleAddToCart}
         />
       </div>
     </div>

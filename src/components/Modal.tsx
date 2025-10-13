@@ -5,8 +5,9 @@ interface ModalProps {
   productName?: string;
   productSize?: string | null;
   productPrice?: number;
-  productCount?: number;
+  totalItems?: number;
   onValidationError?: (hasError: boolean) => void;
+  onAddToCart?: () => void;
 }
 
 export function Modal({
@@ -14,8 +15,9 @@ export function Modal({
   productName,
   productSize,
   productPrice = 0,
-  productCount,
+  totalItems,
   onValidationError,
+  onAddToCart,
 }: ModalProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -25,6 +27,7 @@ export function Modal({
       return;
     }
     onValidationError?.(false);
+    onAddToCart?.();
     setIsOpen(true);
   };
 
@@ -57,7 +60,7 @@ export function Modal({
             <p>€{(productPrice / 100).toFixed(2)}</p>
             <div className="flex flex-col gap-y-3 mt-4">
               <button className="btn btn-outline rounded-full text-base lg:text-lg">
-                {`View Cart (${productCount})`}
+                {`View Cart (${totalItems})`}
               </button>
               <button className="btn btn-neutral rounded-full text-base lg:text-lg font-normal hover:opacity-60">
                 Checkout
