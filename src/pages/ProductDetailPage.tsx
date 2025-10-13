@@ -5,6 +5,7 @@ import { getProductById } from "../api/products";
 import type { ProductDetailType } from "../types";
 import { Modal } from "../components/Modal";
 import { Loader } from "../components/Loader";
+import { ErrorMessage } from "../components/ErrorMessage";
 
 type OutletContextType = {
   totalItems: number;
@@ -29,7 +30,7 @@ export function ProductDetailPage() {
 
   if (isLoading) return <Loader />;
   if (isError || !product)
-    return <div className="text-center text-red-500">Product not found.</div>;
+    return <ErrorMessage message="Sorry! Product not found." />;
 
   const allOutOfStock = product.variants.every(
     (variant) => variant.stockQuantity === 0

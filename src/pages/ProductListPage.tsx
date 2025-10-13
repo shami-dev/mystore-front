@@ -4,6 +4,7 @@ import { Card } from "../components/Card";
 import { getProducts } from "../api/products";
 import type { ProductListType } from "../types";
 import { Loader } from "../components/Loader";
+import { ErrorMessage } from "../components/ErrorMessage";
 
 export function ProductListPage() {
   const [searchParams] = useSearchParams();
@@ -19,10 +20,7 @@ export function ProductListPage() {
   });
 
   if (isLoading) return <Loader />;
-  if (isError)
-    return (
-      <div className="text-center text-red-500">Failed to load products.</div>
-    );
+  if (isError) return <ErrorMessage message="Oops! Failed to load products." />;
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center max-w-7xl mx-auto px-4">
