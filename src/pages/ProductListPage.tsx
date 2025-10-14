@@ -21,6 +21,9 @@ export function ProductListPage() {
     queryFn: () => getProducts(categoryId ? parseInt(categoryId) : undefined),
   });
 
+  if (isLoading) return <Loader />;
+  if (isError) return <ErrorMessage message="Oops! Failed to load products." />;
+
   if (!products || products.length === 0)
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -40,8 +43,6 @@ export function ProductListPage() {
         </div>
       </div>
     );
-  if (isLoading) return <Loader />;
-  if (isError) return <ErrorMessage message="Oops! Failed to load products." />;
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center max-w-7xl mx-auto px-4">
