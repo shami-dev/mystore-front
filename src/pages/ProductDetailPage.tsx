@@ -102,6 +102,8 @@ export function ProductDetailPage() {
           totalItems={totalItems}
           onValidationError={setHasError}
           onAddToCart={handleAddToCart}
+          productImage={product.imageUrl1}
+          imageAlt={product.imageAlt}
         />
       </div>
     </div>

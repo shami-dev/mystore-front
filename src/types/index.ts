@@ -3,7 +3,6 @@ export type ProductDetailType = {
   name: string;
   description: string;
   imageUrl1: string;
-  imageUrl2: string;
   imageAlt: string;
   variants: {
     sku: string;
@@ -17,7 +16,6 @@ export type ProductListType = {
   id: number;
   name: string;
   imageUrl1: string;
-  imageUrl2: string;
   imageAlt: string;
   priceRange: {
     min: number;
@@ -57,4 +55,16 @@ export type NavBarProps = {
 export type CategoryType = {
   id: number;
   name: string;
+};
+
+export type ModalProps = {
+  allOutOfStock?: boolean;
+  productName?: string;
+  productSize?: string | null;
+  productPrice?: number;
+  totalItems?: number;
+  onValidationError?: (hasError: boolean) => void;
+  onAddToCart?: () => void;
+  productImage: string;
+  imageAlt: string;
 };

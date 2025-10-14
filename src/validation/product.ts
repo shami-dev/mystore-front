@@ -13,7 +13,6 @@ export const productSchema = z.object({
     message: "Image alternative text must be under 150 characters",
   }),
   imageUrl1: z.url(),
-  imageUrl2: z.union([z.url(), z.literal("")]).optional(),
   categoryId: z.number().min(1, { message: "Category name is required" }),
   variants: z.array(
     z.object({
