@@ -1,10 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-
-export type NavBarProps = {
-  totalItems: number;
-};
+import { getCategories } from "../api/products";
+import type { CategoryType, NavBarProps } from "../types";
 
 export function NavBar({ totalItems }: NavBarProps) {
+  const { data: categories } = useQuery<CategoryType[]>({
+    queryKey: ["categories"],
+    queryFn: () => getCategories(),
+  });
+
   return (
     <div className="navbar p-0 lg:my-5">
       <div className="navbar-start">
@@ -32,17 +36,18 @@ export function NavBar({ totalItems }: NavBarProps) {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+            className="menu menu-md dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
               <a className="text-base">Categories</a>
               <ul className="p-2">
-                <li>
-                  <Link to={"/products?categoryId=1"}>Apparel</Link>
-                </li>
-                <li>
-                  <Link to={"/products?categoryId=2"}>Accessories</Link>
-                </li>
+                {categories?.map((cat) => (
+                  <li key={cat.id}>
+                    <Link to={`/products?categoryId=${cat.id}`}>
+                      {cat.name}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </li>
           </ul>
@@ -64,12 +69,11 @@ export function NavBar({ totalItems }: NavBarProps) {
             tabIndex={0}
             className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm text-base"
           >
-            <li>
-              <Link to={"/products?categoryId=1"}>Apparel</Link>
-            </li>
-            <li>
-              <Link to={"/products?categoryId=2"}>Accessories</Link>
-            </li>
+            {categories?.map((cat) => (
+              <li key={cat.id}>
+                <Link to={`/products?categoryId=${cat.id}`}>{cat.name}</Link>
+              </li>
+            ))}
           </ul>
         </div>
       </div>

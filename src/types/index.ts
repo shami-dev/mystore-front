@@ -49,3 +49,12 @@ export type UploadedImage = {
   url?: string;
   name: string;
 };
+
+export type NavBarProps = {
+  totalItems: number;
+};
+
+export type CategoryType = {
+  id: number;
+  name: string;
+};

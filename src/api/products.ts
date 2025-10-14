@@ -1,4 +1,8 @@
-import type { ProductDetailType, ProductListType } from "../types";
+import type {
+  CategoryType,
+  ProductDetailType,
+  ProductListType,
+} from "../types";
 import type { ProductInput } from "../validation/product";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
@@ -40,4 +44,11 @@ export async function getProductById(id: number): Promise<ProductDetailType> {
   const res = await fetch(`${API_URL}/products/${id}`);
   if (!res.ok) throw new Error(`Error fetching product: ${res.statusText}`);
   return res.json();
+}
+
+export async function getCategories(): Promise<CategoryType[]> {
+  const res = await fetch(`${API_URL}/categories`);
+  if (!res.ok) throw new Error("Failed to fetch categories");
+  const data = await res.json();
+  return data;
 }
