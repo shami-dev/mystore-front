@@ -20,7 +20,7 @@ export function Card({ name, priceRange, imageUrl1, imageAlt }: CardType) {
           height="auto"
           src={imageUrl1}
           alt={imageAlt}
-          className="w-full h-auto object-cover transition-transform duration-300 ease-in-out group-hover:opacity-0"
+          className="w-full h-auto object-cover"
         />
       </figure>
       <div className="card-body px-0 py-4">
