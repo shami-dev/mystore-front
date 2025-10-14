@@ -10,12 +10,18 @@ export function MainLayout() {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto px-4">
-        <NavBar totalItems={totalItems} />
-      </div>
-      <Outlet context={{ handleAddToCart, totalItems }} />
-      <div className="bg-gray-300">
-        <Footer />
+      <div className="flex flex-col min-h-screen">
+        <header className="max-w-7xl mx-auto w-full px-4">
+          <NavBar totalItems={totalItems} />
+        </header>
+
+        <main className="flex-grow">
+          <Outlet context={{ handleAddToCart, totalItems }} />
+        </main>
+
+        <footer className="bg-gray-300 mt-auto w-full">
+          <Footer />
+        </footer>
       </div>
     </>
   );
