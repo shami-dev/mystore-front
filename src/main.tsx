@@ -3,11 +3,11 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { MainLayout } from "./MainLayout.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { AddProductPage } from "./pages/AddProductPage.tsx";
-import { ProductListPage } from "./pages/ProductListPage.tsx";
-import { ProductDetailPage } from "./pages/ProductDetailPage.tsx";
-import { NotFoundPage } from "./pages/NotFoundPage.tsx";
-import { HomePage } from "./pages/HomePage.tsx";
+import { AddProductPage } from "./routes/AddProductPage.tsx";
+import { ProductListPage } from "./routes/ProductListPage.tsx";
+import { ProductDetailPage } from "./routes/ProductDetailPage.tsx";
+import { NotFoundPage } from "./routes/NotFoundPage.tsx";
+import { HomePage } from "./routes/HomePage.tsx";
 import { AdminLayout } from "./AdminLayout.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
