@@ -7,6 +7,13 @@ export function NavBar({ totalItems }: NavBarProps) {
   const { data: categories } = useQuery<CategoryType[]>({
     queryKey: ["categories"],
     queryFn: () => getCategories(),
+    // Seed with known categories so the menu renders instantly (optimistic UI).
+    // initialDataUpdatedAt: 0 marks this as stale so a background fetch still runs.
+    initialData: [
+      { id: 1, name: "Apparel" },
+      { id: 2, name: "Accessories" },
+    ],
+    initialDataUpdatedAt: 0,
   });
 
   return (
